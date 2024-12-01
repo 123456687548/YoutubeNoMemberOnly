@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YoutubeNoMemberOnly
 // @namespace    http://tampermonkey.net/
-// @version      1.0.0
+// @version      1.0.1
 // @description  Hides member only content on the Youtube frontpage
 // @author       123456687548
 // @match        https://www.youtube.com/
@@ -23,7 +23,7 @@ var uniqueVideos = new Set();
 
 updateCounter();
 
-function addCounter(){
+function addCounter() {
     var divButtons = document.getElementById('buttons');
 
     divButtons.insertBefore(memberOnlyCounter, divButtons.firstChild)
@@ -31,7 +31,7 @@ function addCounter(){
 
 window.addCounter = addCounter;
 
-function updateCounter(){
+function updateCounter() {
     memberOnlyCounterValue++;
     memberOnlyCounter.textContent = `Removed ${memberOnlyCounterValue} member only Videos`;
 
@@ -44,7 +44,7 @@ function updateCounter(){
 
 window.updateCounter = updateCounter;
 
-function findMemberOnlyStuff(){
+function findMemberOnlyStuff() {
     return document.getElementsByClassName('badge-style-type-members-only');
 }
 
@@ -52,33 +52,34 @@ window.findMemberOnlyStuff = findMemberOnlyStuff;
 
 window.destroyMemberOnly = true;
 
-function hideMemberOnlyStuff(){
+function hideMemberOnlyStuff() {
     var items = findMemberOnlyStuff();
 
-    if (items.length == 0){
+    if (items.length == 0) {
         return;
     }
 
-    if (!memberOnlyCounterAdded){
+    if (!memberOnlyCounterAdded) {
         addCounter();
     }
 
-    for (var i = 0; i < items.length; i++){
+    for (var i = 0; i < items.length; i++) {
         var title = items[i].parentElement.parentElement.firstChild.children[1].firstChild.textContent;
         var channel = items[i].parentElement.parentElement.children[1].children[0].children[0].children[0].children[0].children[0].children[0].textContent;
         var video = `${channel} : ${title}`;
 
-        if(!uniqueVideos.has(video)){
+        console.log(items[i])
+        console.log(video)
+        console.log("Removed member only shit!");
+
+        if (uniqueVideos.has(video) && window.destroyMemberOnly) {
+            // Video is most likely offscreen, so don't reorder all videos
+            items[i].parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.remove();
+        } else {
+            items[i].parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.remove();
+
             uniqueVideos.add(video);
             updateCounter();
-
-            console.log(items[i])
-            console.log(title)
-            console.log("Removed member only shit!");
-        }
-
-        if(window.destroyMemberOnly){
-            items[i].parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.remove();
         }
     }
 }
